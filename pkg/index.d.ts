@@ -1,10 +1,12 @@
-interface Options {
+interface IOptions {
     connectionString: string;
     collectionName: string;
 }
 declare class FlexLogger {
+    databaseManagmentSystems: Array<String>;
     isConnected: Boolean;
-    constructor(opt: Options);
+    db: any;
+    constructor(Options: IOptions);
     private connect;
     private log;
     fatal(): void;

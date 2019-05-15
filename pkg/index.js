@@ -7,6 +7,8 @@
 
 */
 Object.defineProperty(exports, "__esModule", { value: true });
+var mysql = require("mysql2");
+var mongoose = require("mongoose");
 var LogLevel;
 (function (LogLevel) {
     LogLevel[LogLevel["FATAL"] = 0] = "FATAL";
@@ -16,12 +18,69 @@ var LogLevel;
     LogLevel[LogLevel["DEBUG"] = 40] = "DEBUG";
 })(LogLevel || (LogLevel = {}));
 var FlexLogger = /** @class */ (function () {
-    function FlexLogger(opt) {
+    function FlexLogger(Options) {
+        this.databaseManagmentSystems = ["mysql", "mongodb"];
         this.isConnected = false;
+        var connectionStringParsed = Options.connectionString.match(/(?<key>[^=;,]+)=(?<val>[^;,]+(,\d+)?)/g);
+        var databaseManagmentSystem = Options.connectionString.split(":")[0];
+        if (this.databaseManagmentSystems.includes(databaseManagmentSystem)) {
+            if (typeof connectionStringParsed === "object") {
+                var connectionObject_1 = {};
+                // get as a key: value
+                connectionStringParsed.map(function (el) {
+                    var args = el.split('=');
+                    connectionObject_1[args[0]] = args[1];
+                });
+                if (connectionObject_1 != null) {
+                    try {
+                        this.connect(connectionObject_1, databaseManagmentSystem);
+                    }
+                    catch (err) {
+                        throw new TypeError("Connection could not be established.");
+                    }
+                }
+                else {
+                    throw new TypeError("Connection string could not parsed.");
+                }
+            }
+            else {
+                throw new TypeError("Invalid connection string.");
+            }
+        }
+        else {
+            throw new TypeError("Invalid database type");
+        }
     }
-    FlexLogger.prototype.connect = function () {
+    FlexLogger.prototype.connect = function (connectionObject, databaseManagmentSystem) {
+        var _this = this;
+        switch (databaseManagmentSystem) {
+            case "mysql":
+                this.db = mysql.createConnection({
+                    host: connectionObject.host,
+                    user: connectionObject.uid,
+                    database: connectionObject.db
+                }, function (err, con) {
+                    if (err) {
+                        throw new Error(err);
+                    }
+                    else {
+                        _this.isConnected = true;
+                        _this.db = con;
+                    }
+                });
+                break;
+            case "mongodb":
+                mongoose.connect(connectionObject.uri, { useFindAndModify: false, useNewUrlParser: true, useCreateIndex: true })
+                    .then(function (mongoDBCon) {
+                    _this.db = mongoDBCon;
+                })
+                    .catch(function (err) {
+                    throw new Error(err);
+                });
+                break;
+        }
     };
-    FlexLogger.prototype.log = function (string) {
+    FlexLogger.prototype.log = function (level) {
     };
     FlexLogger.prototype.fatal = function () {
     };
