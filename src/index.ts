@@ -6,9 +6,24 @@
 
 */
 
+
 import * as mysql from 'mysql2';
 import * as mongoose from 'mongoose';
 
+const LogModel = mongoose.model('Logs', {
+  level: {
+    type: Number,
+    required: true
+  },
+  message: {
+    type: String,
+    required: true
+  },
+  created_date: {
+    type: Date,
+    default: Date.now
+  }
+})
 
 enum LogLevel {
   FATAL = 0,
@@ -40,7 +55,7 @@ class FlexLogger {
   db: any;
 
   constructor(Options: IOptions) {
-
+    // mysql:host=12;db=
     let connectionStringParsed: any = Options.connectionString.match(/(?<key>[^=;,]+)=(?<val>[^;,]+(,\d+)?)/g);
     let databaseManagmentSystem: string = Options.connectionString.split(":")[0];
 
@@ -48,10 +63,12 @@ class FlexLogger {
       if(typeof connectionStringParsed === "object") {
         let connectionObject: any = {};
         // get as a key: value
+        
         connectionStringParsed.map((el: any) => {
           var args: any = el.split('=');
           connectionObject[args[0]] = args[1];
         })
+
         if(connectionObject != null) {
           try {
             this.connect(connectionObject, databaseManagmentSystem);
@@ -77,23 +94,27 @@ class FlexLogger {
           user: connectionObject.uid,
           database: connectionObject.db
         }, (err: any, con: any) => {
-          if(err) { 
-            throw new Error(err);
+          if(!err) {
+            // create table if not exists
+            // this.isConnected = true;
+            // this.db = con;
+            con.query("SHOW TABLES LIKE 'logs'", (err: any, rows: any, fields: any) => {
+
+            })
           } else {
-            this.isConnected = true;
-            this.db = con;
+            throw new Error(err);
           }
         });
       break;
-      case "mongodb":
-        mongoose.connect(connectionObject.uri, {useFindAndModify: false,useNewUrlParser: true,useCreateIndex: true})
-        .then((mongoDBCon: object) => {
-          this.db = mongoDBCon;
-        })
-        .catch((err: any) => {
-          throw new Error(err)
-        })
-      break;
+      // case "mongodb":
+      //   mongoose.connect(connectionObject.uri, {useFindAndModify: false,useNewUrlParser: true,useCreateIndex: true})
+      //   .then(() => {
+      //     this.db = mongoose;
+      //   })
+      //   .catch((err: any) => {
+      //     throw new Error(err)
+      //   })
+      // break;
     }
   }
 
