@@ -1,12 +1,12 @@
-interface IOptions {
+interface ILoggerOptions {
     connectionString: string;
     collectionName: string;
 }
-declare class FlexLogger {
+export default class FlexLogger {
     databaseManagmentSystems: Array<String>;
     isConnected: Boolean;
     db: any;
-    constructor(Options: IOptions);
+    constructor(Options: ILoggerOptions);
     private connect;
     private log;
     fatal(): void;
@@ -15,4 +15,4 @@ declare class FlexLogger {
     info(): void;
     debug(): void;
 }
-export default FlexLogger;
+export {};

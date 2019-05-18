@@ -13,5 +13,6 @@
     "mongoose": "^5.5.8",
     "mysql2": "^1.6.5",
     "typescript": "^3.4.5"
-  }
+  },
+  "dependencies": {}
 }

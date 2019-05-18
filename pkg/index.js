@@ -8,7 +8,6 @@
 */
 Object.defineProperty(exports, "__esModule", { value: true });
 var mysql = require("mysql2");
-var mongoose = require("mongoose");
 var LogLevel;
 (function (LogLevel) {
     LogLevel[LogLevel["FATAL"] = 0] = "FATAL";
@@ -21,8 +20,10 @@ var FlexLogger = /** @class */ (function () {
     function FlexLogger(Options) {
         this.databaseManagmentSystems = ["mysql", "mongodb"];
         this.isConnected = false;
-        var connectionStringParsed = Options.connectionString.match(/(?<key>[^=;,]+)=(?<val>[^;,]+(,\d+)?)/g);
+        //get the database system
         var databaseManagmentSystem = Options.connectionString.split(":")[0];
+        Options.connectionString = Options.connectionString.split(':')[1];
+        var connectionStringParsed = Options.connectionString.match(/(?<key>[^=;,]+)=(?<val>[^;,]+(,\d+)?)/g);
         if (this.databaseManagmentSystems.includes(databaseManagmentSystem)) {
             if (typeof connectionStringParsed === "object") {
                 var connectionObject_1 = {};
@@ -52,7 +53,6 @@ var FlexLogger = /** @class */ (function () {
         }
     }
     FlexLogger.prototype.connect = function (connectionObject, databaseManagmentSystem) {
-        var _this = this;
         switch (databaseManagmentSystem) {
             case "mysql":
                 this.db = mysql.createConnection({
@@ -60,23 +60,18 @@ var FlexLogger = /** @class */ (function () {
                     user: connectionObject.uid,
                     database: connectionObject.db
                 }, function (err, con) {
-                    if (err) {
-                        throw new Error(err);
-                    }
-                    else {
-                        _this.isConnected = true;
-                        _this.db = con;
-                    }
+                    // if(!err) {
+                    //   // create table if not exists
+                    //   // this.isConnected = true;
+                    //   // this.db = con;
+                    //   con.query("SHOW TABLES LIKE 'logs'", (err: any, rows: any, fields: any) => {
+                    //     console.log(rows)
+                    //   })
+                    // } else {
+                    //   throw new TypeError(err);
+                    // }
                 });
-                break;
-            case "mongodb":
-                mongoose.connect(connectionObject.uri, { useFindAndModify: false, useNewUrlParser: true, useCreateIndex: true })
-                    .then(function (mongoDBCon) {
-                    _this.db = mongoDBCon;
-                })
-                    .catch(function (err) {
-                    throw new Error(err);
-                });
+                console.log(this.db);
                 break;
         }
     };
