@@ -5,10 +5,9 @@
   Npm: https://www.npmjs.com/package/flex-logger
 
 */
+declare var require: any;
 
-
-import * as mysql from 'mysql2';
-
+const mysql = require('mysql2')
 
 enum LogLevel {
   FATAL = 0,
@@ -77,12 +76,14 @@ export default class FlexLogger {
   private connect(connectionObject: IConnectionObject, databaseManagmentSystem: String) {
     switch (databaseManagmentSystem) {
       case "mysql":
-        this.db = mysql.createConnection({
+        const db: any = mysql.createConnection({
           host: connectionObject.host,
           user: connectionObject.uid,
           database: connectionObject.db
+        }, (err: any, con: any) => {
+          console.log(err)
         });
-        console.log(this.db)
+
       break;
     }
   }
