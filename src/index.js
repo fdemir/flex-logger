@@ -13,19 +13,25 @@ const MysqlLog = require('./MysqlLog')
 class FlexLogger {
 
   constructor(connectionString, collectionName) {
-    let connectionObject = this.parseConnectionString(connectionString);
-    if(typeof connectionObject === "object") {
+    this.connectionObject = this.parseConnectionString(connectionString)
+    this.collectionName = collectionName
+  }
+
+  init() {
+    return new Promise((resolve, reject) => {
+      var self = this;
       switch(this.databaseManagmentSystem) {
         case 'mysql':
-          const mysqlCon = new MysqlLog(connectionObject);
-        break;
-        case 'mongodb':
-          // this.db = .....
+          const mysqlLog = new MysqlLog(this.connectionObject, this.collectionName)
+          mysqlLog.connect().then(() => {
+            resolve(true)
+            self.database = mysqlLog;
+          }).catch((err) => {
+            reject(err)
+          })
         break;
       }
-    } else {
-      throw new TypeError(`Connection string could not parsed.`);
-    }
+    })
   }
 
 
@@ -45,6 +51,10 @@ class FlexLogger {
         return connectionObject;
       }
     }
+  }
+
+  log(msg, level) {
+    this.database.save('Deneme logggggggg', Level.FATAL)
   }
   
 }
