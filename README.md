@@ -1,6 +1,5 @@
 # Flex Logger
-This package saves the logs inside the database. It is so simple and very easy to use. It's supports MongoDB and Mysql.
-
+This package saves the logs inside the database. It is so simple and very easy to use. It's supports MongoDB and Mysql. You dont need a create a table. If there is no table , it is gonna create automatically.
 ## Install
 
 ```
@@ -25,11 +24,21 @@ const logger = new FlexLogger('mongodb', 'mongodb+srv://username:password@host/d
 ```js
 const logger = new FlexLogger('mysql', 'host=localhost;user=root;password=;dbname=test;', 'tableName')
 ```
+
 There is five log level has automatically created. Each level has own unique number. 
 
 Now logging time
 
 **Example Log**
+
+```
+  FATAL: 0
+  ERROR: 10
+  WARN: 20
+  INFO: 30
+  DEBUG: 40
+```
+
 ```js
 logger.fatal('fatal error')
 logger.error('something is wrong')
