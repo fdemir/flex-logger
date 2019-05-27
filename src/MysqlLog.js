@@ -11,8 +11,8 @@ class MysqlLog {
     return new Promise((resolve, reject) => {
       this.db.query(`SELECT * FROM ${this.tableName}`, (err, results, fields) => {
         if(typeof results === 'undefined') {
-          this.db.query('CREATE TABLE logs ( `id` INT(11) NOT NULL AUTO_INCREMENT , `message` TEXT NOT NULL , `level` INT(11) NOT NULL , `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`))', (err, results, fields) => {
-            resolve()
+          this.db.query('CREATE TABLE '+ this.tableName +' ( `id` INT(11) NOT NULL AUTO_INCREMENT , `message` TEXT NOT NULL , `level` INT(11) NOT NULL , `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`))', (err, results, fields) => {
+            if(!err) resolve()
           })
         }
       })
