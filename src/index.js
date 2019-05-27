@@ -1,5 +1,10 @@
+const mongoose = require('mongoose')
+const mysql = require('mysql2')
 
-const Level = {
+const MongoDBLog = require('./MongoDBLog')
+const MysqlLog = require('./MysqlLog')
+
+const Levels = {
   FATAL: 0,
   ERROR: 10,
   WARN: 20,
@@ -7,40 +12,39 @@ const Level = {
   DEBUG: 40 
 }
 
-const MysqlLog = require('./MysqlLog')
-
-
 class FlexLogger {
 
-  constructor(connectionString, collectionName) {
-    this.connectionObject = this.parseConnectionString(connectionString)
+  constructor(connectionType, connectionString, collectionName) {
+    this.connectionType = connectionType;
     this.collectionName = collectionName
-  }
-
-  init() {
-    return new Promise((resolve, reject) => {
-      var self = this;
-      switch(this.databaseManagmentSystem) {
-        case 'mysql':
-          const mysqlLog = new MysqlLog(this.connectionObject, this.collectionName)
-          mysqlLog.connect().then(() => {
-            resolve(true)
-            self.database = mysqlLog;
-          }).catch((err) => {
-            reject(err)
-          })
+    if(typeof connectionString === 'string') {
+      switch (this.connectionType) {
+        case 'mongodb': 
+          mongoose.connect(connectionString, {useNewUrlParser: true})
+          this.db = mongoose;
         break;
+        case 'mysql':
+          var connectionObject = this.parseConnectionString(connectionString)
+          const connection = mysql.createConnection({
+            host: connectionObject.host,
+            user: connectionObject.user,
+            password: connectionObject.password,
+            database: connectionObject.dbname
+          });
+          this.db = connection;
+        break;
+        default: 
+          throw new TypeError('Invalid connection type.')
       }
-    })
+    } else {
+      throw new TypeError('Not supported connection string type.')
+    }
   }
 
 
   parseConnectionString(connectionString) {
-    let databaseManagmentSystem = connectionString.split(":")[0];
-    connectionString = connectionString.split(':')[1]; 
-    let connectionStringParsed = connectionString.match(/(?<key>[^=;,]+)=(?<val>[^;,]+(,\d+)?)/g);
-    if(databaseManagmentSystem === 'mysql' || databaseManagmentSystem === 'mongodb') {
-      this.databaseManagmentSystem = databaseManagmentSystem;
+    if(this.connectionType === 'mysql') {
+      let connectionStringParsed = connectionString.match(/(?<key>[^=;,]+)=(?<val>[^;,]+(,\d+)?)/g);
       if(typeof connectionStringParsed === "object") {
         let connectionObject = {};
         // get as a key: value
@@ -50,11 +54,39 @@ class FlexLogger {
         })
         return connectionObject;
       }
-    }
+    } else {
+      return connectionString;
+    } 
   }
 
   log(msg, level) {
-    this.database.save('Deneme logggggggg', Level.FATAL)
+    let log = null;
+    switch(this.connectionType) {
+      case 'mongodb':
+        log = new MongoDBLog(this.db, msg, level, this.collectionName)
+      break;
+      case 'mysql':
+        log = new MysqlLog(this.db, msg, level, this.collectionName)
+      break;
+    }
+    log.save()
+  }
+
+
+  error(msg) {
+    this.log(msg, Levels.ERROR)
+  }
+
+  warn(msg) {
+    this.log(msg, Levels.WARN)
+  }
+
+  info(msg) {
+    this.log(msg, Levels.INFO)
+  }
+
+  debug(msg) {
+    this.log(msg, Levels.DEBUG)
   }
   
 }

@@ -1,58 +1,29 @@
-const mysql = require('mysql2')
-
 class MysqlLog {
-
-  constructor(connectionObject, collectionName) {
-    this.connectionObject = connectionObject;
-    this.collectionName = collectionName;
-    this.save = this.save;
+  
+  constructor(db, log, level, tableName) {
+    this.db = db;
+    this.log = log;
+    this.level = level;
+    this.tableName = tableName;
   }
 
-  connect() {
-    var self = this;
+  check() {
     return new Promise((resolve, reject) => {
-      let con = self.connectionObject;
-      let connection =  mysql.createConnection({
-        host: con.host,
-        user: con.uid,
-        database: con.db,
-        password: con.password
-      })
-      connection.connect((err) => {
-        if(err == null) {
-          self.con = connection;
-          self.isConnect = true;
-          self.init().then(() => {
-            resolve(self);
-          }).catch((err) => {
-            reject(err)
-          })
-        } else {
-          self.isConnect = false;
-          reject(err)
-        }
-      });
-    })
-  }
-
-  init() {
-    var self = this;
-    return new Promise((resolve, reject) => {
-      self.con.query(`SHOW TABLES LIKE '${self.collectionName}'`, (err, result) => {
-        if(result.length === 1) {
-          resolve(true)
-        } else {
-          self.con.query('CREATE TABLE '+ self.collectionName +' ( `id` INT(11) NOT NULL AUTO_INCREMENT , `level` INT(2) NOT NULL , `text` TEXT NOT NULL , `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;', (err, result) => {
-            reject("Database could not create. Error:" + err);
+      this.db.query(`SELECT * FROM ${this.tableName}`, (err, results, fields) => {
+        if(typeof results === 'undefined') {
+          this.db.query('CREATE TABLE logs ( `id` INT(11) NOT NULL AUTO_INCREMENT , `message` TEXT NOT NULL , `level` INT(11) NOT NULL , `date` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`))', (err, results, fields) => {
+            resolve()
           })
         }
       })
     })
   }
 
-  save(text, level) {
-    this.con.query(`INSERT INTO logs SET level = ${level}, text = '${text}'`, (err, result) => {
-      
+  save() {
+    return new Promise((resolve, reject) => {
+      this.check().then(() => {
+        this.db.query(`INSERT ${this.tableName} SET message='${this.log}', level = ${this.level}`)
+      })
     })
   }
 
