@@ -95,3 +95,8 @@ class FlexLogger {
 }
 
 module.exports = FlexLogger;
+
+
+// const logger = new FlexLogger('mysql', 'host=localhost;user=root;password=;dbname=test;', 'logs')
+// logger.error('ben yeniyim')
+
