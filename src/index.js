@@ -72,6 +72,9 @@ class FlexLogger {
     log.save()
   }
 
+  fatal(msg) {
+    this.log(msg, Levels.FATAL)
+  }
 
   error(msg) {
     this.log(msg, Levels.ERROR)
