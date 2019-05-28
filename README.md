@@ -49,3 +49,12 @@ logger.debug('debug')
 ```
 
 For more example please look at the examples folder. And, just let me know when you find a bug.
+
+## Contributors
+- Furkan Demir <frndemir@gmail.com>
+
+## Lisence & Copyright
+
+@ Furkan Demir
+
+Lisenced under the [MIT Lisence](LISENCE)
