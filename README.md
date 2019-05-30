@@ -50,6 +50,10 @@ logger.debug('debug')
 
 For more example please look at the examples folder. And, just let me know when you find a bug.
 
+**Todo**
+- Middlewares
+- Custom error levels
+
 ## Contributors
 - Furkan Demir <frndemir@gmail.com>
 
