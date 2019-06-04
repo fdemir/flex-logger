@@ -16,6 +16,7 @@ const FlexLogger = require('flex-logger')
 Firstly you must create instance from flex logger class. Flex logger constructor can take arguments.
 
 Mongodb:
+```js
 const logger = new FlexLogger('mongodb', 'mongodb+srv://username:password@host/dbname', 'collectionName')
 ```
 Mysql:
@@ -49,12 +50,12 @@ logger.debug('debug')
 It will be execute before the log save in the database.
 Usage: 
 ```js
-  logger.on(level, function(msg, level))
+  logger.on(level, (msg, level) => {})
 ```
 Example:
 ```js
-  logger.on(10, function(msg, level){
-   
+  logger.on(10, (msg, level) => {
+    console.log('hello')
   })
 ```
 
