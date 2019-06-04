@@ -96,6 +96,12 @@ class FlexLogger {
     this.log(msg, Levels.DEBUG)
   }
 
+  set(name, level) {
+    if(typeof level !== 'undefined' && typeof name !== 'undefined') {
+      
+    }
+  }
+
   on(level, method) {
     if(typeof level !== 'undefined' && typeof method !== 'undefined') {
       this.handlers.push({
