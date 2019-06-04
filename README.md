@@ -43,13 +43,12 @@ logger.error('something is wrong')
 logger.warn('it is gonna explode')
 logger.info('i am super')
 logger.debug('debug')
-
 ```
 
 #### Event Handlers
 It will be execute before the log save in the database.
 Usage: 
-``js
+```js
   logger.on(level, function(msg, level))
 ```
 Example:
