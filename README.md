@@ -59,6 +59,17 @@ Example:
   })
 ```
 
+#### Custom Levels
+You can set a new log method with level number and name;
+Usage: 
+```js
+  logger.setLevel('mylevel', 100)
+```
+Example:
+```js
+  logger.mylevel('hello world')
+```
+
 For more example please look at the examples folder. And, just let me know when you find a bug.
 
 ## Contributors
