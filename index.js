@@ -96,9 +96,11 @@ class FlexLogger {
     this.log(msg, Levels.DEBUG)
   }
 
-  set(name, level) {
+  setLevel(name, level) {
     if(typeof level !== 'undefined' && typeof name !== 'undefined') {
-      
+      this[name] = (msg) => {
+        this.log(msg, level)
+      }
     }
   }
 
@@ -114,5 +116,3 @@ class FlexLogger {
 }
 
 module.exports = FlexLogger;
-
-const example = require('./example/')
