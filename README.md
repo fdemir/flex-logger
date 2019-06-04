@@ -15,12 +15,11 @@ const FlexLogger = require('flex-logger')
 ```
 Firstly you must create instance from flex logger class. Flex logger constructor can take arguments.
 
-**Example MongoDB Instance**
+Mongodb:
 ```js
 const logger = new FlexLogger('mongodb', 'mongodb+srv://username:password@host/dbname', 'collectionName')
 ```
-
-**Example Mysql Instance**
+Mysql:
 ```js
 const logger = new FlexLogger('mysql', 'host=localhost;user=root;password=;dbname=test;', 'tableName')
 ```
@@ -29,7 +28,7 @@ There is five log level has automatically created. Each level has own unique num
 
 Now logging time
 
-**Example Log**
+### Logging
 
 ```
   FATAL: 0
@@ -45,7 +44,19 @@ logger.error('something is wrong')
 logger.warn('it is gonna explode')
 logger.info('i am super')
 logger.debug('debug')
+```
 
+#### Event Handlers
+It will be execute before the log save in the database.
+Usage: 
+```js
+  logger.on(level, (msg, level) => {})
+```
+Example:
+```js
+  logger.on(10, (msg, level) => {
+    console.log('hello')
+  })
 ```
 
 For more example please look at the examples folder. And, just let me know when you find a bug.
