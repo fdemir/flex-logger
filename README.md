@@ -47,7 +47,7 @@ logger.debug('debug')
 ```
 
 #### Event Handlers
-It will be execute before the log save in the database.
+It will be executed before the log save in the database.
 Usage: 
 ```js
   logger.on(level, (msg, level) => {})
@@ -60,14 +60,14 @@ Example:
 ```
 
 #### Custom Levels
-You can set a new log method with level number and name;
+You can set a new log method with level number and name.
 Usage: 
 ```js
-  logger.setLevel('mylevel', 100)
+  logger.setLevel('success', 100)
 ```
 Example:
 ```js
-  logger.mylevel('hello world')
+  logger.success('hello world')
 ```
 
 For more example please look at the examples folder. And, just let me know when you find a bug.
