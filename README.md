@@ -1,5 +1,5 @@
 # Flex Logger
-This package saves the logs inside the database. It is so simple and very easy to use. It's supports MongoDB and Mysql. You dont need a create a table. If there is no table , it is gonna create automatically.
+This package saves the logs inside the database. It is so simple and very easy to use. It's supports MongoDB and Mysql. You dont need a create a table. If there is no table, it is gonna create automatically.
 ## Install
 
 ```
